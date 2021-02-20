@@ -3,17 +3,18 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 )
 
 type myErrorType struct {
 	errorMessage string
-	time time.Time
+	time         time.Time
 }
 
-func (e *myErrorType) Error () string {
+func (e *myErrorType) Error() string {
 	return "The error occurs: " + e.errorMessage + " with timestamp: " + e.time.Format("15:04:05.00000")
-} 
+}
 
 func recovering() {
 	if err := recover(); err != nil {
@@ -30,7 +31,7 @@ func panicOutOfRange() {
 	}
 }
 
-func recoveringWithTime () {
+func recoveringWithTime() {
 	if smth := recover(); smth != nil {
 		if err, ok := smth.(myErrorType); ok {
 			fmt.Println(err.Error())
@@ -54,4 +55,11 @@ func main() {
 	fmt.Println("===  ===")
 	panicManually(true)
 	fmt.Println("=== End of program ===")
+	file, err := os.OpenFile("test.txt", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		fmt.Printf("File cannot be created, because of %v", err)
+	}
+
+	defer file.Close()
+	_, _ = fmt.Fprintln(file, "Test data")
 }
