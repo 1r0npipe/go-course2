@@ -11,15 +11,15 @@ type myErrorType struct {
 	time time.Time
 }
 
-func (e *myErrorType) myErrorTypePrint () error {
-	return fmt.Errorf("The error occurs: %s, with timestamp: %s", e.errorMessage, e.time.String())
+func (e *myErrorType) Error () string {
+	return "The error occurs: " + e.errorMessage + " with timestamp: " + e.time.Format("15:04:05.00000")
 } 
 
 func recovering() {
 	if err := recover(); err != nil {
 		log.Println("Panic occurs here: ", err)
 	}
-	fmt.Println("Time stamp of panic: " + time.Now().String())
+	fmt.Println("Time stamp of panic: " + time.Now().Format("15:04:05.00000"))
 }
 
 func panicOutOfRange() {
@@ -32,15 +32,16 @@ func panicOutOfRange() {
 
 func recoveringWithTime () {
 	if smth := recover(); smth != nil {
-		fmt.Println(smth)
+		if err, ok := smth.(myErrorType); ok {
+			fmt.Println(err.Error())
+		}
 	}
 }
 
 func panicManually(flag bool) {
 	defer recoveringWithTime()
-	var myTime *myErrorType
+	var myTime myErrorType
 	if flag {
-		fmt.Println("The panic manually created: ")
 		myTime.errorMessage = "Manually called PANIC"
 		myTime.time = time.Now()
 		panic(myTime)
