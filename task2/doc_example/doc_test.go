@@ -1,4 +1,4 @@
-package doctest
+package doc
 
 import (
 	"fmt"
