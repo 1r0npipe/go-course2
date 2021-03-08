@@ -11,20 +11,20 @@ import (
 // SetM is the example of working wiht conccurency
 type SetM struct {
 	sync.Mutex
-	fl map[float64]struct{}
+	maps map[float64]struct{}
 }
 
 // NewSetM defines new set for Mutex version
 func NewSetM() *SetM {
 	return &SetM{
-		fl: map[float64]struct{}{},
+		maps: map[float64]struct{}{},
 	}
 }
 
 // AddM is the function with adding to Mutex set
 func (s *SetM) AddM(f float64) {
 	s.Lock()
-	s.fl[f] = struct{}{}
+	s.maps[f] = struct{}{}
 	s.Unlock()
 }
 
@@ -32,27 +32,27 @@ func (s *SetM) AddM(f float64) {
 func (s *SetM) HasM(f float64) bool {
 	s.Lock()
 	defer s.Unlock()
-	_, ok := s.fl[f]
+	_, ok := s.maps[f]
 	return ok
 }
 
 // SetRWM is another example of working with RWMutex
 type SetRWM struct {
 	sync.RWMutex
-	fl map[float64]struct{}
+	maps map[float64]struct{}
 }
 
 // NewSetRWM defines new set for Mutex version
 func NewSetRWM() *SetRWM {
 	return &SetRWM{
-		fl: map[float64]struct{}{},
+		maps: map[float64]struct{}{},
 	}
 }
 
 // AddRWM is the function with adding to Mutex set
 func (s *SetRWM) AddRWM(f float64) {
 	s.Lock()
-	s.fl[f] = struct{}{}
+	s.maps[f] = struct{}{}
 	s.Unlock()
 }
 
@@ -60,7 +60,7 @@ func (s *SetRWM) AddRWM(f float64) {
 func (s *SetRWM) HasRWM(f float64) bool {
 	s.Lock()
 	defer s.Unlock()
-	_, ok := s.fl[f]
+	_, ok := s.maps[f]
 	return ok
 }
 

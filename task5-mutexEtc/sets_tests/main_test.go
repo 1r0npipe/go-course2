@@ -10,9 +10,6 @@ import (
 
 const (
 	base = 1000
-	// k10  = int(base * 0.1)
-	// k90  = base - k10
-	// k50  = base / 2
 )
 
 // BenchmarkSetAddM doing the benchmart for ADD in Mutex version
@@ -69,6 +66,65 @@ func BenchmarkSetAddMw10r90(b *testing.B) {
 					continue
 				}
 				set.HasM(1)
+				counter++
+			}
+		})
+	})
+}
+// BenchmarkSetAddRWMr10rw90 test
+func BenchmarkSetAddRWMr10rw90(b *testing.B) {
+	var set = NewSetRWM()
+	var counter uint = 0
+	b.Run("", func(b *testing.B) {
+		b.SetParallelism(base)
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				if counter%10 == 0 {
+					set.HasRWM(1)
+					counter++
+					continue
+				}
+				set.AddRWM(1)
+				counter++
+			}
+		})
+	})
+}
+
+// BenchmarkSetHasRWMr50w50 doing the benchmart for has in RWMutex version
+func BenchmarkSetHasRWMr50w50(b *testing.B) {
+	var set = NewSetRWM()
+	var counter uint = 0
+	b.Run("", func(b *testing.B) {
+		b.SetParallelism(base)
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				if counter%5 == 0 {
+					set.HasRWM(1)
+					counter++
+					continue
+				}
+				set.AddRWM(1)
+				counter++
+			}
+		})
+	})
+}
+
+// BenchmarkSetAddRWMw10r90 write skew 10 for RWMutex
+func BenchmarkSetAddRWMw10r90(b *testing.B) {
+	var set = NewSetRWM()
+	var counter uint = 0
+	b.Run("", func(b *testing.B) {
+		b.SetParallelism(base)
+		b.RunParallel(func(pb *testing.PB) {
+			for pb.Next() {
+				if counter%10 == 0 {
+					set.AddRWM(1)
+					counter++
+					continue
+				}
+				set.HasRWM(1)
 				counter++
 			}
 		})

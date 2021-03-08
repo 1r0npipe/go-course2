@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"runtime"
 	"sync"
 )
 
@@ -12,7 +11,6 @@ var (
 )
 
 func main() {
-	runtime.GOMAXPROCS(8)
 	var wg sync.WaitGroup
 	ch := make(chan int)
 	go func(channel chan int) {
@@ -25,14 +23,16 @@ func main() {
 	}(ch)
 	for i := 0; i < maxGoRoutine; i++ {
 		wg.Add(1)
-		go incThread(i, maxCountInter, ch, &wg)
+		go func(id int){
+			defer wg.Done()
+			incThread(id, maxCountInter, ch)
+		}(i)
 	}
 	wg.Wait()
 	fmt.Println("Main is finished")
 }
 
-func incThread(id int, n int, channel chan int, wg *sync.WaitGroup) {
-	defer wg.Done()
+func incThread(id int, n int, channel chan int) {
 	var counter int = 0
 	for ; counter < n; counter++ {
 	}
