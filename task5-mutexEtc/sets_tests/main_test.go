@@ -40,7 +40,7 @@ func BenchmarkSetHasMr50w50(b *testing.B) {
 		b.SetParallelism(base)
 		b.RunParallel(func(pb *testing.PB) {
 			for pb.Next() {
-				if counter%5 == 0 {
+				if counter%2 == 0 {
 					set.HasM(1)
 					counter++
 					continue
@@ -99,7 +99,7 @@ func BenchmarkSetHasRWMr50w50(b *testing.B) {
 		b.SetParallelism(base)
 		b.RunParallel(func(pb *testing.PB) {
 			for pb.Next() {
-				if counter%5 == 0 {
+				if counter%2 == 0 {
 					set.HasRWM(1)
 					counter++
 					continue
