@@ -30,12 +30,12 @@ func main() {
 	//}
 	pers2 := &person2{"bob", 34}
 	mapTest := make(map[string]interface{}, 1)
-	mapTest["python"] = 5
-	result, err := changeIntoStruct(*pers2, mapTest)
+	mapTest["name"] = "test"
+	_, err := changeIntoStruct(pers2, mapTest)
 	if err != nil {
 		log.Fatal("Can't change struct by map: ", err)
 	}
-	fmt.Println(result)
+	fmt.Println(pers2)
 }
 
 func changeIntoStruct(in interface{}, mapInit map[string]interface{}) (interface{}, error) {
@@ -47,7 +47,6 @@ func changeIntoStruct(in interface{}, mapInit map[string]interface{}) (interface
 		val = val.Elem()
 	}
 	if val.Kind() == reflect.Struct {
-		fmt.Println("checking struct...")
 		for i := 0; i < val.NumField(); i += 1 {
 			typeField := val.Type().Field(i)
 			if typeField.Type.Kind() == reflect.Slice {
@@ -64,18 +63,26 @@ func changeIntoStruct(in interface{}, mapInit map[string]interface{}) (interface
 				changeIntoStruct(val.Field(i).Interface(), mapInit)
 				continue
 			}
-			for key, value := range mapInit {
-				if val.Field(i).Kind() == reflect.String {
-					f := val.Field(i)
-					if f == key {
-						if val.Field(i + 1).IsValid() {
-							val.Field(i + 1).Set(value)
-						}
-					}
+			if typeField.Type.Kind() == reflect.String {
+				mapValue, ok := mapInit[typeField.Name]
+				fmt.Println("map value", typeField.Name)
+				if !ok {
+					return nil, fmt.Errorf("the field is not found")
+				}
+				switch mapValue.(type) {
+				case int:
+					val.Field(i).SetInt(mapValue.(int64))
+				case float64:
+					val.Field(i).SetFloat(mapValue.(float64))
+				case string:
+					val.Field(i).SetString(mapValue.(string))
+				case bool:
+					val.Field(i).SetBool(mapValue.(bool))
+				default:
+					return nil, fmt.Errorf("type mistamtch to assign the value")
 				}
 			}
 		}
 	}
-
 	return val.Interface(), nil
 }
