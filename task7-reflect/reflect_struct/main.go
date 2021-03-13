@@ -7,35 +7,32 @@ import (
 )
 
 type person struct {
-	name   string
-	skills []Skill
-}
-type person2 struct {
-	name string
-	age  int
+	FirstName string
+	Skills    []Skill
 }
 type Skill struct {
-	name string
-	exp  uint32
+	Name string
+	Exp  int64
 }
 
 func main() {
-	//pers := &person{
-	//	name: "john",
-	//	skills: []Skill{
-	//		{"c++", 2},
-	//		{"python", 3},
-	//		{"golang", 5},
-	//	},
-	//}
-	pers2 := &person2{"bob", 34}
+	pers := person{
+		FirstName: "john",
+		Skills: []Skill{
+			{"c++", int64(2)},
+			{"python", int64(3)},
+			{"golang", int64(5)},
+		},
+	}
+	//pers2 := &person2{"bob", 34}
 	mapTest := make(map[string]interface{}, 1)
-	mapTest["name"] = "test"
-	_, err := changeIntoStruct(pers2, mapTest)
+	mapTest["Name"] = "test"
+	fmt.Printf("%+v\n", pers)
+	_, err := changeIntoStruct(pers, mapTest)
 	if err != nil {
 		log.Fatal("Can't change struct by map: ", err)
 	}
-	fmt.Println(pers2)
+	fmt.Printf("%+v", pers)
 }
 
 func changeIntoStruct(in interface{}, mapInit map[string]interface{}) (interface{}, error) {
@@ -49,38 +46,36 @@ func changeIntoStruct(in interface{}, mapInit map[string]interface{}) (interface
 	if val.Kind() == reflect.Struct {
 		for i := 0; i < val.NumField(); i += 1 {
 			typeField := val.Type().Field(i)
+			fmt.Println(typeField.Name)
 			if typeField.Type.Kind() == reflect.Slice {
-				fmt.Println("We have the slice to parse next")
+				//fmt.Println("We have the slice to parse next")
 				for j := 0; j < val.Field(i).Len(); j += 1 {
 					itemStruct := val.Field(i).Index(j)
-					fmt.Println("wow", itemStruct)
-					changeIntoStruct(itemStruct.Addr().Interface(), mapInit)
+					changeIntoStruct(itemStruct.Interface(), mapInit)
 					continue
 				}
 			}
 			if typeField.Type.Kind() == reflect.Struct {
-				fmt.Println("We have just one more struct inside")
+				//fmt.Println("We have just one more struct inside")
 				changeIntoStruct(val.Field(i).Interface(), mapInit)
 				continue
 			}
-			if typeField.Type.Kind() == reflect.String {
-				mapValue, ok := mapInit[typeField.Name]
-				fmt.Println("map value", typeField.Name)
-				if !ok {
-					return nil, fmt.Errorf("the field is not found")
-				}
-				switch mapValue.(type) {
-				case int:
-					val.Field(i).SetInt(mapValue.(int64))
-				case float64:
-					val.Field(i).SetFloat(mapValue.(float64))
-				case string:
-					val.Field(i).SetString(mapValue.(string))
-				case bool:
-					val.Field(i).SetBool(mapValue.(bool))
-				default:
-					return nil, fmt.Errorf("type mistamtch to assign the value")
-				}
+			mapValue, ok := mapInit[typeField.Name]
+			if !ok {
+				continue
+			}
+			fmt.Printf("%+v - %+v\n", mapValue, typeField.Name)
+			switch val.Field(i).Type().Kind() {
+			case reflect.Int:
+				val.Field(i).SetInt(mapValue.(int64))
+			case reflect.Float64:
+				val.Field(i).SetFloat(mapValue.(float64))
+			case reflect.String:
+				val.Field(i).SetString(mapValue.(string))
+			case reflect.Bool:
+				val.Field(i).SetBool(mapValue.(bool))
+			default:
+				return nil, fmt.Errorf("type mistamtch to assign the value")
 			}
 		}
 	}
