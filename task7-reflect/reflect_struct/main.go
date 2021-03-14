@@ -16,6 +16,7 @@ type Skill struct {
 }
 
 func main() {
+	// Define an example of person struct to replace fields in
 	pers := &person{
 		FirstName: "john",
 		Skills: []Skill{
@@ -28,10 +29,12 @@ func main() {
 	mapTest["Exp"] = int64(7)
 	mapTest["Name"] = "test"
 	mapTest["FirstName"] = "Robby"
+	// output befor change
 	fmt.Printf("%+v\n", pers)
 	err := changestruct.ChangeIntoStruct(pers, mapTest)
 	if err != nil {
 		log.Fatal("Can't change struct by map: ", err)
 	}
+	// output after change
 	fmt.Printf("%+v", pers)
 }

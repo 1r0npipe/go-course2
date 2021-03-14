@@ -5,6 +5,10 @@ import (
 	"reflect"
 )
 
+// ChangeIntoStruct the function which gets interface (structure) and map
+// where you define the key[field in struct] and value -> change into struct
+// for this value, it works with slices and sub-structure, returns error
+// can work with String and int64 types inside of Struct (or Sub-Struct)
 func ChangeIntoStruct(in interface{}, mapInit map[string]interface{}) error {
 	if in == nil {
 		return fmt.Errorf("interface is empty")

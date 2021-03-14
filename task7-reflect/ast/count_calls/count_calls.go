@@ -1,0 +1,5 @@
+package countcalls
+
+func countAsyncCalls() {
+
+}
