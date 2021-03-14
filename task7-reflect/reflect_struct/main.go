@@ -24,13 +24,12 @@ func main() {
 			{"golang", int64(5)},
 		},
 	}
-	//pers2 := &person{"bob", []Skill{}}
 	mapTest := make(map[string]interface{}, 1)
 	mapTest["Exp"] = int64(7)
 	mapTest["Name"] = "test"
 	mapTest["FirstName"] = "Robby"
 	fmt.Printf("%+v\n", pers)
-	err := changeIntoStruct(pers, mapTest)
+	err := changestruct.ChangeIntoStruct(pers, mapTest)
 	if err != nil {
 		log.Fatal("Can't change struct by map: ", err)
 	}

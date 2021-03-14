@@ -1,11 +1,11 @@
-package change_struct
+package changestruct
 
 import (
 	"fmt"
 	"reflect"
 )
 
-func changeIntoStruct(in interface{}, mapInit map[string]interface{}) error {
+func ChangeIntoStruct(in interface{}, mapInit map[string]interface{}) error {
 	if in == nil {
 		return fmt.Errorf("interface is empty")
 	}
@@ -19,12 +19,12 @@ func changeIntoStruct(in interface{}, mapInit map[string]interface{}) error {
 			if typeField.Type.Kind() == reflect.Slice { // if we need to parse Slice
 				for j := 0; j < val.Field(i).Len(); j += 1 {
 					itemStruct := val.Field(i).Index(j)
-					changeIntoStruct(itemStruct.Addr().Interface(), mapInit)
+					ChangeIntoStruct(itemStruct.Addr().Interface(), mapInit)
 					continue
 				}
 			}
 			if typeField.Type.Kind() == reflect.Struct { // if we need to parse Struct
-				changeIntoStruct(val.Field(i).Addr().Interface(), mapInit)
+				ChangeIntoStruct(val.Field(i).Addr().Interface(), mapInit)
 				continue
 			}
 			mapValue, ok := mapInit[typeField.Name]
