@@ -7,13 +7,13 @@ import (
 )
 
 func main() {
-	filename := "test.go"
-	funcName := "testFunc"
+	filename := "./test_file.go"
+	funcName := "ManyGoCalls"
 	num, err := countcalls.CountAsyncCalls(filename, funcName)
 	if err != nil {
 		log.Fatal("Cant count the number of go func due to %+v\n", err)
 	}
-	fmt.Println("Number of go calls in file: %s at function: %s is %d\n",
+	fmt.Printf("Number of go calls in file: \"%s\" at function: \"%s\" is %d\n",
 		filename,
 		funcName,
 		num)
